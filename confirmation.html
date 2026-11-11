@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlightBooking — אישור הזמנה</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="index.html" class="logo">FlightBooking</a>
+            <nav class="nav">
+                <a href="index.html">חיפוש טיסות</a>
+                <a href="my-bookings.html" id="navMyBookings">ההזמנות שלי</a>
+                <a href="admin.html" id="navAdmin" hidden>הוספת טיסה</a>
+                <a href="login.html" id="navLogin">התחברות</a>
+                <a href="#" id="navLogout" hidden>התנתקות</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="noBooking" class="message message-info" style="display:none">
+            לא נמצאה הזמנה להצגה. <a href="index.html">חזרה לחיפוש טיסות</a>
+        </div>
+
+        <div id="confirmationContent" hidden>
+            <div class="summary-box" style="text-align:center">
+                <h1 style="margin-bottom:8px">ההזמנה אושרה</h1>
+                <p style="color:var(--muted)">קוד ההזמנה שלך</p>
+                <div id="bookingReference" class="big-reference">—</div>
+            </div>
+
+            <div class="summary-box">
+                <div class="summary-row"><span class="label">סטטוס</span><span id="bookingStatus">—</span></div>
+                <div class="summary-row"><span class="label">נוסע</span><span id="passengerName">—</span></div>
+                <div class="summary-row"><span class="label">סה"כ שולם</span><span id="bookingTotal">—</span></div>
+                <div class="summary-row"><span class="label">ארוחה</span><span id="mealType">—</span></div>
+                <div class="summary-row"><span class="label">כשרות</span><span id="kashrutLevel">—</span></div>
+            </div>
+
+            <h2>פרטי הטיסה</h2>
+            <div id="flightsDetails"></div>
+
+            <h2>מושבים</h2>
+            <div id="seatsDetails" class="summary-box"></div>
+
+            <div class="form-actions" style="justify-content:center;margin-top:24px">
+                <a href="index.html" class="btn btn-secondary">חיפוש טיסה נוספת</a>
+                <a href="my-bookings.html" class="btn btn-primary">ההזמנות שלי</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">FlightBooking &copy; 2026</div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/confirmation.js"></script>
+</body>
+</html>

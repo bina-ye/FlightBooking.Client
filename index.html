@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlightBooking — חיפוש טיסות</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="index.html" class="logo">FlightBooking</a>
+            <nav class="nav">
+                <a href="index.html" class="active">חיפוש טיסות</a>
+                <a href="my-bookings.html" id="navMyBookings" hidden>ההזמנות שלי</a>
+                <a href="admin.html" id="navAdmin" hidden>הוספת טיסה</a>
+                <a href="login.html" id="navLogin">התחברות</a>
+                <a href="#" id="navLogout" hidden>התנתקות</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="search-card">
+            <h1>מצאו את הטיסה הבאה שלכם</h1>
+
+            <form id="searchForm" class="search-form">
+                <div class="field">
+                    <label for="origin">מוצא</label>
+                    <select id="origin" name="origin" required>
+                        <option value="TLV" selected>תל אביב (TLV)</option>
+                        <option value="JFK">ניו יורק (JFK)</option>
+                        <option value="LHR">לונדון (LHR)</option>
+                        <option value="CDG">פריז (CDG)</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="destination">יעד</label>
+                    <select id="destination" name="destination" required>
+                        <option value="TLV">תל אביב (TLV)</option>
+                        <option value="JFK" selected>ניו יורק (JFK)</option>
+                        <option value="LHR">לונדון (LHR)</option>
+                        <option value="CDG">פריז (CDG)</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="departureDate">תאריך יציאה</label>
+                    <input type="date" id="departureDate" name="departureDate" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">חיפוש טיסות</button>
+            </form>
+
+            <div id="searchMessage" class="message" style="display:none"></div>
+        </section>
+
+        <section id="resultsSection" hidden>
+            <h2>טיסות זמינות</h2>
+            <div id="results" class="results-grid"></div>
+            <div id="pagination" class="pagination"></div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">FlightBooking &copy; 2026</div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script> 
+    <script src="js/flights.js"></script>
+</body>
+</html>

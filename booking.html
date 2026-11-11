@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlightBooking — השלמת הזמנה</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="index.html" class="logo">FlightBooking</a>
+            <nav class="nav">
+                <a href="index.html">חיפוש טיסות</a>
+                <a href="my-bookings.html" id="navMyBookings" hidden>ההזמנות שלי</a>
+                <a href="admin.html" id="navAdmin" hidden>הוספת טיסה</a>
+                <a href="login.html" id="navLogin">התחברות</a>
+                <a href="#" id="navLogout" hidden>התנתקות</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1>השלמת הזמנה</h1>
+
+        <div id="loginNotice" class="message message-info" style="display:none">
+            יש להתחבר לפני ביצוע הזמנה. <a href="login.html">למעבר להתחברות</a>
+        </div>
+
+        <div id="bookingContent" hidden>
+            <div class="summary-box">
+                <div class="summary-row"><span class="label">טיסה</span><span id="summaryFlight">—</span></div>
+                <div class="summary-row"><span class="label">מושבים</span><span id="summarySeats">—</span></div>
+                <div class="summary-row"><span class="label">סה"כ לתשלום</span><span id="summaryTotal">—</span></div>
+            </div>
+
+            <form id="bookingForm" class="form-card">
+                <h2 style="margin-top:0">פרטי הנוסע</h2>
+
+                <div class="form-row">
+                    <label for="fullName">שם מלא</label>
+                    <input type="text" id="fullName" maxlength="200" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="passport">מספר דרכון</label>
+                    <input type="text" id="passport" maxlength="30" required>
+                </div>
+
+                <div class="form-row">
+
+                    <label for="mealType">ארוחה</label>
+                    <select id="mealType">
+                        <option value="1" selected>רגילה</option>
+                        <option value="2">צמחונית</option>
+                        <option value="3">טבעונית</option>
+                        <option value="4">ללא גלוטן</option>
+                        <option value="0">ללא ארוחה</option>
+                    </select>
+                </div>
+           
+
+              <div class="form-row">
+                    <label for="kashrutLevel">כשרות</label>
+                    <select id="kashrutLevel">
+                        <option value="0">לא נדרש</option>
+                        <option value="1" selected>כשר</option>
+                        <option value="2">גלאט כשר</option>
+                        <option value="3">מהדרין</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="specialRequests">בקשות מיוחדות</label>
+                    <textarea id="specialRequests" rows="3" maxlength="500"></textarea>
+                </div>
+
+                <h2>פרטי תשלום</h2>
+
+                <div class="form-row">
+                    <label for="cardNumber">מספר כרטיס (16 ספרות)</label>
+                    <input type="text" id="cardNumber" maxlength="16" placeholder="4111111111111111" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="expiry">תוקף (MM/YY)</label>
+                    <input type="text" id="expiry" maxlength="5" placeholder="12/28" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="cvv">CVV</label>
+                    <input type="text" id="cvv" maxlength="3" placeholder="123" required>
+                </div>
+
+                <div id="bookingMessage" class="message" style="display:none"></div>
+
+                <div class="form-actions">
+                    <a href="javascript:history.back()" class="btn btn-secondary">חזרה</a>
+                    <button type="submit" id="submitBtn" class="btn btn-primary">אישור הזמנה</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">FlightBooking &copy; 2026</div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script> 
+    <script src="js/booking.js"></script>
+</body>
+</html>
