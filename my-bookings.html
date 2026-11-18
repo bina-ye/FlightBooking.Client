@@ -9,9 +9,12 @@
 <body>
     <header class="site-header">
         <div class="container header-inner">
-            <a href="index.html" class="logo">FlightBooking</a>
+        <a href="index.html" class="logo">
+    <img src="images/לוגו האתר.jpg" alt="FlightBooking" class="logo-img">
+</a> 
             <nav class="nav">
                 <a href="index.html">חיפוש טיסות</a>
+                <a href="flights.html">כל הטיסות</a>
                 <a href="my-bookings.html" class="active" id="navMyBookings">ההזמנות שלי</a>
                 <a href="admin.html" id="navAdmin" hidden>הוספת טיסה</a>
                 <a href="login.html" id="navLogin">התחברות</a>
@@ -32,12 +35,79 @@
         <div id="pagination" class="pagination"></div>
     </main>
 
+    <!-- ===== מודאל עריכת הזמנה ===== -->
+    <div id="editBookingModal" class="modal">
+        <div class="modal-content">
+            <h2>עריכת הזמנה</h2>
+
+            <div id="editBookingMessage" class="message" style="display:none"></div>
+
+            <div class="form-row">
+                <label for="editPassengerFullName">שם מלא</label>
+                <input type="text" id="editPassengerFullName" maxlength="200">
+            </div>
+
+            <div class="form-row">
+                <label for="editPassportNumber">מספר דרכון</label>
+                <input type="text" id="editPassportNumber" maxlength="30">
+                <div class="hint" id="editPassportHint">
+                    מטעמי אבטחה אין השרת מחזיר את מספר הדרכון — יש להזינו מחדש.
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label for="editMealType">ארוחה</label>
+                <select id="editMealType">
+                    <option value="1">רגילה</option>
+                    <option value="2">צמחונית</option>
+                    <option value="3">טבעונית</option>
+                    <option value="4">ללא גלוטן</option>
+                    <option value="0">ללא ארוחה</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="editKashrutLevel">כשרות</label>
+                <select id="editKashrutLevel">
+                    <option value="0">לא נדרש</option>
+                    <option value="1">כשר</option>
+                    <option value="2">גלאט כשר</option>
+                    <option value="3">מהדרין</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="editSpecialRequests">בקשות מיוחדות</label>
+                <textarea id="editSpecialRequests" rows="3" maxlength="500"></textarea>
+            </div>
+
+            <div class="form-row">
+                <label>בחירת מושבים</label>
+                <div id="editSeatsSummary" class="hint">טוען מושבים...</div>
+                <div id="editSeatsGrid" class="seats-grid"></div>
+                <div class="seats-legend">
+                    <span><i class="seat-dot seat-mine"></i> שלי</span>
+                    <span><i class="seat-dot seat-free"></i> פנוי</span>
+                    <span><i class="seat-dot seat-taken"></i> תפוס</span>
+                    <span><i class="seat-dot seat-releasing"></i> ישוחרר</span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeEditBooking()">ביטול</button>
+                <button type="button" class="btn btn-primary" id="editBookingSaveBtn"
+                        onclick="saveBookingEdit()">שמירת שינויים</button>
+            </div>
+        </div>
+    </div>
+
     <footer class="site-footer">
         <div class="container">FlightBooking &copy; 2026</div>
     </footer>
 
+   
     <script src="js/api.js"></script>
-    <script src="js/auth.js"></script> 
+    <script src="js/auth.js"></script>
     <script src="js/my-bookings.js"></script>
 </body>
 </html>

@@ -9,9 +9,12 @@
 <body>
     <header class="site-header">
         <div class="container header-inner">
-            <a href="index.html" class="logo">FlightBooking</a>
+            <a href="index.html" class="logo">
+    <img src="images/לוגו האתר.jpg" alt="FlightBooking" class="logo-img">
+</a> 
             <nav class="nav">
                 <a href="index.html">חיפוש טיסות</a>
+                <a href="flights.html">כל הטיסות</a>
                 <a href="my-bookings.html" id="navMyBookings" hidden>ההזמנות שלי</a>
                 <a href="admin.html" id="navAdmin" hidden>הוספת טיסה</a>
                 <a href="login.html" id="navLogin">התחברות</a>
@@ -34,21 +37,20 @@
                 <div class="summary-row"><span class="label">סה"כ לתשלום</span><span id="summaryTotal">—</span></div>
             </div>
 
-            <form id="bookingForm" class="form-card">
+            <form id="bookingForm" class="form-card" novalidate>
                 <h2 style="margin-top:0">פרטי הנוסע</h2>
 
                 <div class="form-row">
                     <label for="fullName">שם מלא</label>
-                    <input type="text" id="fullName" maxlength="200" required>
+                    <input type="text" id="fullName" maxlength="200">
                 </div>
 
                 <div class="form-row">
                     <label for="passport">מספר דרכון</label>
-                    <input type="text" id="passport" maxlength="30" required>
+                    <input type="text" id="passport" maxlength="30">
                 </div>
 
                 <div class="form-row">
-
                     <label for="mealType">ארוחה</label>
                     <select id="mealType">
                         <option value="1" selected>רגילה</option>
@@ -58,9 +60,8 @@
                         <option value="0">ללא ארוחה</option>
                     </select>
                 </div>
-           
 
-              <div class="form-row">
+                <div class="form-row">
                     <label for="kashrutLevel">כשרות</label>
                     <select id="kashrutLevel">
                         <option value="0">לא נדרש</option>
@@ -79,17 +80,20 @@
 
                 <div class="form-row">
                     <label for="cardNumber">מספר כרטיס (16 ספרות)</label>
-                    <input type="text" id="cardNumber" maxlength="16" placeholder="4111111111111111" required>
+                    <input type="text" id="cardNumber" maxlength="16"
+                           placeholder="4111111111111111" inputmode="numeric" dir="ltr">
                 </div>
 
                 <div class="form-row">
                     <label for="expiry">תוקף (MM/YY)</label>
-                    <input type="text" id="expiry" maxlength="5" placeholder="12/28" required>
+                    <input type="text" id="expiry" maxlength="5"
+                           placeholder="12/28" inputmode="numeric" dir="ltr">
                 </div>
 
                 <div class="form-row">
                     <label for="cvv">CVV</label>
-                    <input type="text" id="cvv" maxlength="3" placeholder="123" required>
+                    <input type="text" id="cvv" maxlength="3"
+                           placeholder="123" inputmode="numeric" dir="ltr">
                 </div>
 
                 <div id="bookingMessage" class="message" style="display:none"></div>
@@ -106,8 +110,12 @@
         <div class="container">FlightBooking &copy; 2026</div>
     </footer>
 
+    <style>
+        .input-error { border-color: #b3261e !important; background: #fff8f8; }
+    </style>
+
     <script src="js/api.js"></script>
-    <script src="js/auth.js"></script> 
+    <script src="js/auth.js"></script>
     <script src="js/booking.js"></script>
 </body>
 </html>

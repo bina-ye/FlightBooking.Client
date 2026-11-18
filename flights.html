@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>כל הטיסות | FlightBooking</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+    <a href="index.html" class="logo">
+    <img src="images/לוגו האתר.jpg" alt="FlightBooking" class="logo-img">
+</a> 
+      <nav class="main-nav nav" >
+        <a href="index.html">חיפוש טיסות</a>
+        <a href="flights.html" class="active">כל הטיסות</a>
+       <a href="my-bookings.html" id="navMyBookings" hidden>ההזמנות שלי</a>
+        <a href="admin.html" id="navAdmin" hidden>הוספת טיסה</a>
+        <a href="login.html" id="navLogin">התחברות</a>
+       <a href="#" id="navLogout" hidden>התנתקות</a>
+
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>כל הטיסות</h1>
+    <p class="subtitle" id="flightsMeta">טוען טיסות…</p>
+
+    <section class="filters" aria-label="סינון טיסות">
+      <input id="filterOrigin" type="text" maxlength="3" placeholder="מוצא (TLV)" aria-label="קוד נמל מוצא">
+      <input id="filterDestination" type="text" maxlength="3" placeholder="יעד (JFK)" aria-label="קוד נמל יעד">
+      <label class="filter-date">
+        <span>מתאריך</span>
+        <input id="filterFrom" type="date" aria-label="מתאריך יציאה">
+      </label>
+      <label class="filter-date">
+        <span>עד תאריך</span>
+        <input id="filterTo" type="date" aria-label="עד תאריך יציאה">
+      </label>
+      <button id="filterBtn" class="btn btn-primary" type="button">סנן</button>
+      <button id="clearFilterBtn" class="btn btn-outline" type="button">נקה</button>
+    </section>
+
+    <div id="message" class="message hidden"></div>
+
+    <div id="flightsList" class="flight-list"></div>
+
+    <div id="pagination" class="pagination"></div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/all-flights.js"></script>
+  <!-- <script src="js/my-bookings.js"></script> -->
+</body>
+</html>
