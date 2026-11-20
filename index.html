@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlightBooking — חיפוש טיסות</title>
+    <title>FLYBY — חיפוש טיסות</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="site-header">
         <div class="container header-inner">
-<a href="index.html" class="logo">
-    <img src="images/לוגו האתר.jpg" alt="FlightBooking" class="logo-img">
-</a>     
-       <nav class="nav">
+            <a href="index.html" class="logo"><img src="images/לוגו האתר.jpg" alt="FlightBooking" class="logo-img"></a>
+
+            <nav class="nav">
                 <a href="index.html" class="active">חיפוש טיסות</a>
                 <a href="flights.html">כל הטיסות</a>
                 <a href="my-bookings.html" id="navMyBookings" hidden>ההזמנות שלי</a>
@@ -24,8 +26,22 @@
     </header>
 
     <main class="container">
-        <section class="search-card">
-            <h1>מצאו את הטיסה הבאה שלכם</h1>
+        <section class="hero">
+            <div class="hero-content">
+                <span class="eyebrow">הטיסה הבאה שלכם</span>
+                <h1>לאן טסים היום?</h1>
+                <p class="hero-sub">
+                    מצאו טיסות ליותר מ-40 יעדים, עם מחירים שקופים, בחירת מושבים והזמנה בדקות ספורות.
+                </p>
+                <div class="hero-actions">
+                    <a href="#search" class="btn btn-primary">חיפוש טיסות</a>
+                    <a href="flights.html" class="btn btn-secondary">לכל הטיסות</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="search-card" id="search">
+            <h2>חיפוש טיסות</h2>
 
             <form id="searchForm" class="search-form">
                 <div class="field">
@@ -53,10 +69,31 @@
                     <input type="date" id="departureDate" name="departureDate" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary">חיפוש טיסות</button>
+                <button type="submit" class="btn btn-primary">חיפוש</button>
             </form>
 
             <div id="searchMessage" class="message" style="display:none"></div>
+        </section>
+
+        <div class="trust-strip">
+            <div class="trust-item"><strong>40+</strong><span>יעדים בעולם</span></div>
+            <div class="trust-item"><strong>1,200</strong><span>טיסות בחודש</span></div>
+            <div class="trust-item"><strong>24/6</strong><span>שירות לקוחות</span></div>
+        </div>
+
+        <section class="quick-links">
+            <a href="flights.html" class="quick-link">
+                <strong>כל הטיסות</strong>
+                <span>עיון בכל לוח הטיסות</span>
+            </a>
+            <a href="my-bookings.html" class="quick-link">
+                <strong>ההזמנות שלי</strong>
+                <span>צפייה ועריכה של הזמנות</span>
+            </a>
+            <a href="login.html" class="quick-link">
+                <strong>אזור אישי</strong>
+                <span>התחברות לחשבון</span>
+            </a>
         </section>
 
         <section id="resultsSection" hidden>
@@ -67,11 +104,30 @@
     </main>
 
     <footer class="site-footer">
-        <div class="container">FlightBooking &copy; 2026</div>
+        <div class="container">
+            <div class="footer-inner">
+                <a href="index.html" class="footer-logo">
+                    <img src="images/לוגו האתר.jpg" alt="FlightBooking" class="footer-logo-img">
+                </a>
+
+                <nav class="footer-links">
+                    <a href="index.html">חיפוש טיסות</a>
+                    <a href="flights.html">כל הטיסות</a>
+                    <a href="my-bookings.html">ההזמנות שלי</a>
+                </nav>
+
+                <span class="footer-text">טיסות בקלות, מכל מקום</span>
+            </div>
+
+            <div class="footer-bottom">
+                <span>FlightBooking &copy; 2026</span>
+                <span>כל הזכויות שמורות</span>
+            </div>
+        </div>
     </footer>
 
     <script src="js/api.js"></script>
-    <script src="js/auth.js"></script> 
+    <script src="js/auth.js"></script>
     <script src="js/flights.js"></script>
 </body>
 </html>
