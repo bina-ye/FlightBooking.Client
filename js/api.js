@@ -1,5 +1,12 @@
-// כתובת ה-API
-const API_BASE = "http://localhost:5069/api";
+// כתובת ה-API — זיהוי אוטומטי לפי הסביבה
+// פיתוח מקומי: השרת רץ על localhost:5069
+// פרודקשן (Render): לקוח סטטי שנטען מדומיין ציבורי → API של Render
+const API_BASE = (() => {
+    const isLocal = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
+    return isLocal
+        ? "http://localhost:5069/api"
+        : "https://flightbooking-api-we1l.onrender.com/api";
+})();
 
 // שמירת הטוקן
 const TOKEN_KEY = "flightbooking_token";

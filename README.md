@@ -10,12 +10,30 @@
 
 דפדפן מודרני בלבד. אין תהליך build ואין תלויות npm — הקבצים מוגשים כפי שהם.
 
+## כתובת ה-API
+
+`API_BASE` מוגדר ב-[js/api.js](js/api.js) ומזוהה אוטומטית לפי הסביבה:
+
+| סביבה | כתובת |
+|---|---|
+| מקומי (localhost / 127.0.0.1) | `http://localhost:5069/api` |
+| פרודקשן (Render) | `https://flightbooking-api-we1l.onrender.com/api` |
+
 ## הרצה מקומית
 
-1. השרת חייב לרוץ על `http://localhost:5069` — ראו את ריפו השרת.
+1. השרת צריך לרוץ על `http://localhost:5069` — ראו את ריפו השרת.
 2. הגישו את הקבצים דרך שרת HTTP מקומי (Live Server, `npx serve`, או `python -m http.server 5500`) — לא דרך `file://`.
-3. ודאו ש-`API_BASE` בקובץ `js/api.js` מותאם לפורט של השרת.
-4. אם הדף מוגש מפורט אחר, הוסיפו אותו ל-CORS ב-`Program.cs` של השרת.
+3. אם הדף מוגש מפורט אחר, הוסיפו אותו ל-CORS ב-`Program.cs` של השרת.
+
+## פרסום ב-Render (Static Site)
+
+הפרויקט סטטי לחלוטין — אין Build Command. הקובץ [render.yaml](render.yaml) מגדיר את השירות:
+
+- **Type**: Static Site
+- **Name**: `flyby`
+- **Build Command**: ריק
+- **Publish Directory**: `.`
+- **CORS בצד שרת**: חובה להוסיף `https://flyby.onrender.com` לרשימת ה-Origins המותרים (`Program.cs` בריפו השרת).
 
 ## מסכים
 
@@ -32,8 +50,8 @@
 
 | תפקיד | אימייל | סיסמה |
 |---|---|---|
-| מנהל | admin@flightbooking.local | Password123! |
-| לקוח | customer@flightbooking.local | Password123! |
+| מנהל | admin@flightbooking.local | stby123 |
+| לקוח | customer@flightbooking.local | 123456 |
 
 ## טיפול בהתנגשות (409)
 

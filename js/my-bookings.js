@@ -467,7 +467,13 @@ async function saveBookingEdit() {
             `ההזמנה ${updated.bookingReference} עודכנה בהצלחה`, "success");
         await loadBookings();
     } catch (error) {
-        showMessage(msgEl, error.message);
+        if (error.status === 409) {
+            showMessage(msgEl,
+                "אחד המושבים שנבחרו נתפס על ידי משתמש אחר בינתיים. ההזמנה לא עודכנה — אנא בחרו מושב פנוי אחר ונסו שוב.",
+                "error");
+        } else {
+            showMessage(msgEl, error.message);
+        }
         if (error.status === 401) {
             clearToken();
             window.location.href = "login.html";
