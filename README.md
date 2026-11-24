@@ -30,10 +30,11 @@
 הפרויקט סטטי לחלוטין — אין Build Command. הקובץ [render.yaml](render.yaml) מגדיר את השירות:
 
 - **Type**: Static Site
-- **Name**: `flyby`
+- **Name**: `flyby` (השם היה תפוס — Render הוסיף סיומת)
+- **URL בפועל**: `https://flyby-18gb.onrender.com`
 - **Build Command**: ריק
 - **Publish Directory**: `.`
-- **CORS בצד שרת**: חובה להוסיף `https://flyby.onrender.com` לרשימת ה-Origins המותרים (`Program.cs` בריפו השרת).
+- **CORS בצד שרת**: חובה להוסיף `https://flyby-18gb.onrender.com` לרשימת ה-Origins המותרים (`Program.cs` בריפו השרת).
 
 ## מסכים
 
