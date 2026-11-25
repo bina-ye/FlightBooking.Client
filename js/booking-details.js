@@ -23,6 +23,13 @@ function showDetailsMessage(text, type = "error") {
     detailsMessage.style.display = text ? "block" : "none";
 }
 
+// הגנה מפני הזרקת HTML — הערכים מוצגים ב-innerHTML
+function escapeHtml(str) {
+    return String(str ?? "").replace(/[&<>"']/g, c => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[c]));
+}
+
 function renderBooking(booking) {
     // השדות עשויים לחזור ב-PascalCase או ב-camelCase
     const pick = (obj, ...keys) => {
@@ -43,8 +50,8 @@ function renderBooking(booking) {
     detailsEl.innerHTML = `
         <section class="flight-card">
             <div class="flight-main">
-                <div class="flight-number">קוד הזמנה: ${reference ?? "-"}</div>
-                <div class="flight-route"><span class="badge">${status ?? "-"}</span></div>
+                <div class="flight-number">קוד הזמנה: ${escapeHtml(reference ?? "-")}</div>
+                <div class="flight-route"><span class="badge">${escapeHtml(status ?? "-")}</span></div>
                 <div class="flight-time">
                     <span>נוצרה: ${formatDateTime(createdAt)}</span>
                     <span>מזהה: ${id}</span>
@@ -64,11 +71,11 @@ function renderBooking(booking) {
             row.className = "flight-card";
             row.innerHTML = `
                 <div class="flight-main">
-                    <div class="flight-number">${pick(f, "flightNumber", "FlightNumber") ?? ""}</div>
+                    <div class="flight-number">${escapeHtml(pick(f, "flightNumber", "FlightNumber") ?? "")}</div>
                     <div class="flight-route">
-                        <span class="airport">${pick(f, "originCode", "OriginCode") ?? ""}</span>
+                        <span class="airport">${escapeHtml(pick(f, "originCode", "OriginCode") ?? "")}</span>
                         <span class="arrow">←</span>
-                        <span class="airport">${pick(f, "destinationCode", "DestinationCode") ?? ""}</span>
+                        <span class="airport">${escapeHtml(pick(f, "destinationCode", "DestinationCode") ?? "")}</span>
                     </div>
                     <div class="flight-time">
                         <span>יציאה: ${formatDateTime(pick(f, "departureTime", "DepartureTime"))}</span>

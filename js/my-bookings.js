@@ -145,6 +145,9 @@ async function openEditBooking(id) {
 
     summary.textContent = "טוען מושבים...";
     grid.innerHTML = "";
+    hideValidationBanner();
+    document.getElementById("editPassportNumber")?.classList.remove("input-error");
+    document.getElementById("editPassengerFullName")?.classList.remove("input-error");
     modal.classList.add("open");
 
     try {
@@ -229,19 +232,82 @@ function renderSeatsGrid() {
     }
 
     grid.innerHTML = seatsByFlight.map(group => {
-        const buttons = group.seats.length === 0
+        const body = group.seats.length === 0
             ? '<div class="hint">לא ניתן לטעון את מושבי הטיסה.</div>'
-            : `<div class="seat-row-buttons">${
-                group.seats.map(seat => seatButtonHtml(seat)).join("")
-            }</div>`;
+            : buildSeatMapHtml(group.seats);
 
         return `
             <div class="seat-flight-group">
                 <div class="seat-flight-title">${escapeHtml(group.title)}</div>
-                ${buttons}
+                ${body}
             </div>
         `;
     }).join("");
+}
+
+/* ---------- תצוגת מפת מושבים: שורות ועמודות ---------- */
+
+// "12C" → { row: 12, col: "C" }
+function parseSeatNumber(seatNumber) {
+    const m = String(seatNumber ?? "").trim().match(/^(\d+)\s*([A-Za-zא-ת]?)$/);
+    if (!m) return null;
+    return { row: Number(m[1]), col: m[2].toUpperCase() };
+}
+
+/**
+ * בונה מפה: כל שורה בשורה נפרדת, העמודות לפי אות המושב.
+ * עמודות שלא קיימות/A/B/C/D/E/F — נשמרות כפי שהשרת החזיר, כדי לא להסתמך על הנחה.
+ * המערך ממוין לפי מספר שורה ואז לפי אות עמודה.
+ */
+function buildSeatMapHtml(seats) {
+    const parsed = seats.map(seat => ({ seat, parsed: parseSeatNumber(seat.seatNumber) }));
+
+    // אם אין מספרי מושב תקינים — נפילה חזרה לרשימה רגילה (לא שוברת את המסך)
+    if (parsed.some(item => !item.parsed)) {
+        return `<div class="seat-map-grid seat-map-grid--flat">${
+            seats.map(seat => seatButtonHtml(seat)).join("")
+        }</div>`;
+    }
+
+    const rows = [...new Set(parsed.map(i => i.parsed.row))].sort((a, b) => a - b);
+    const cols = [...new Set(parsed.map(i => i.parsed.col))]
+        .filter(Boolean)
+        .sort();
+
+    const byKey = new Map(parsed.map(i => [`${i.parsed.row}${i.parsed.col}`, i.seat]));
+    const hasCols = cols.length > 0;
+
+    // העמודות מוצגות A..F משמאל לימין (מנגנון RTL), פסר השמות בצד ימין
+    const header = hasCols
+        ? `<div class="seat-map-row seat-map-head">
+               ${cols.map(c => `<span class="seat-col-label">${escapeHtml(c)}</span>`).join("")}
+               <span class="seat-row-label"></span>
+           </div>`
+        : "";
+
+    const body = rows.map(row => {
+        const cells = hasCols
+            ? cols.map((c, idx) => {
+                // המעבר (סמטה) — מרווח בפועל בין הקבוצה הימנית לקבוצה השמאלית
+                const aisle = idx === Math.floor(cols.length / 2) ? " seat-map-aisle" : "";
+                const seat = byKey.get(`${row}${c}`);
+                return seat
+                    ? `<span class="seat-map-cell${aisle}">${seatButtonHtml(seat)}</span>`
+                    : `<span class="seat-map-cell${aisle}"><span class="seat-map-empty" aria-hidden="true"></span></span>`;
+            }).join("")
+            : `<div class="seat-row-buttons">${
+                seats.filter(s => parseSeatNumber(s.seatNumber).row === row)
+                    .map(seatButtonHtml).join("")
+            }</div>`;
+
+        return `
+            <div class="seat-map-row">
+                ${cells}
+                <span class="seat-row-label">${row}</span>
+            </div>`;
+    }).join("");
+
+    return `<div class="seat-map" style="--seat-cols:${Math.max(cols.length, 1)}">${header}${body}</div>`;
 }
 
 function seatButtonHtml(seat) {
@@ -291,23 +357,28 @@ function toggleSeat(seatId) {
     const newSelectedCount =
         [...selectedSeatIds].filter(id => !mySeatIds.has(id)).length;
 
-    // יש מושב שלי שממתין להחלפה — מחליפים
-    if (mineForReplacement.length > 0) {
-        if (selectedSeatIds.has(seatId)) {
-            selectedSeatIds.delete(seatId);
-        } else {
-            selectedSeatIds.add(seatId);
-        }
+    // לחיצה חוזרת על מושב חדש שכבר נבחר — מבטלת את הבחירה (בלי תלות במצב אחר)
+    if (selectedSeatIds.has(seatId)) {
+        selectedSeatIds.delete(seatId);
         renderSeatsGrid();
         updateSeatsSummary();
         return;
     }
 
-    // אין מועמד להחלפה — אסור להוסיף מושבים
+    // יש מושב שלי שממתין להחלפה — מחליפים
+    if (mineForReplacement.length > 0) {
+        selectedSeatIds.add(seatId);
+        renderSeatsGrid();
+        updateSeatsSummary();
+        return;
+    }
+
+    // אין מועמד להחלפה — אסור להוסיף מושבים בלי לשחרר את הקודם
     if (newSelectedCount >= mySeatIds.size) {
         showMessage(
             document.getElementById("editBookingMessage"),
-            "לא ניתן להוסיף מושבים בהזמנה זו. כדי להחליף — לחצו תחילה על המושב הקיים שלכם (יסומן בכתום), ואחר כך על המושב החדש.",
+            "יש לבטל את המושב הקודם לפני בחירת מושב חלופי. " +
+            "לחצו על המושב הקיים שלכם — הוא יסומן \"ישוחרר\" — ואז בחרו את המושב החדש.",
             "info");
         return;
     }
@@ -351,13 +422,49 @@ function updateSeatsSummary() {
 
     if (total < required) {
         text += ` · חסרים ${required - total} מושבים — יש לבחור מושב חלופי.`;
-    } else if (total === required && releasing.length > 0) {
+    } else if (total > required) {
+        text += " · יש לבטל את המושב הקודם לפני בחירת מושב חלופי.";
+    } else if (releasing.length > 0) {
         text += " · מוכן לשמירה.";
-    } else if (total === required && added.length === 0) {
+    } else if (added.length === 0) {
         text += " · להחלפה: לחצו קודם על מושב קיים, ואחר כך על מושב פנוי.";
     }
 
     summary.textContent = text;
+}
+
+/* ---------- הודעה בולטת ליד כפתור השמירה ---------- */
+
+function showValidationBanner(items, extraNote) {
+    const banner = document.getElementById("editValidationBanner");
+    if (!banner) return;
+
+    const list = items.map(t => `<strong>${escapeHtml(t)}</strong>`).join(", ");
+    banner.innerHTML = `
+        <span class="vb-icon" aria-hidden="true">!</span>
+        <span class="vb-text">
+            <span class="vb-title">לא ניתן לשמור — חסרים פרטים</span>
+            <span class="vb-body">נדרש למלא: ${list}.</span>
+            ${extraNote ? `<span class="vb-body">${escapeHtml(extraNote)}</span>` : ""}
+        </span>`;
+    banner.hidden = false;
+    banner.classList.add("is-shown");
+
+    // ההודעה יושבת בתחתית החלון — גוללים אליה רק בתוך תוכן המודאל, ולא את כל העמוד
+    const scroller = banner.closest(".modal-content");
+    if (scroller) {
+        scroller.scrollTo({ top: banner.offsetTop - 16, behavior: "auto" });
+    } else {
+        banner.scrollIntoView({ block: "nearest", behavior: "auto" });
+    }
+}
+
+function hideValidationBanner() {
+    const banner = document.getElementById("editValidationBanner");
+    if (!banner) return;
+    banner.hidden = true;
+    banner.classList.remove("is-shown");
+    banner.innerHTML = "";
 }
 
 function closeEditBooking() {
@@ -365,6 +472,7 @@ function closeEditBooking() {
     mySeatIds = new Set();
     selectedSeatIds = new Set();
     seatsByFlight = [];
+    hideValidationBanner();
     document.getElementById("editBookingModal").classList.remove("open");
 }
 
@@ -388,9 +496,11 @@ async function saveBookingEdit() {
     /* --- ולידציה: שדות חובה --- */
     const missing = [];
     let passportMissing = false;
+    let nameMissing = false;
 
     if (!passengerFullName) {
         missing.push("שם נוסע");
+        nameMissing = true;
     } else if (passengerFullName.length > 200) {
         showMessage(msgEl, "שם הנוסע ארוך מ-200 תווים.");
         return;
@@ -412,6 +522,8 @@ async function saveBookingEdit() {
     /* --- הדגשת שדה דרכון חסר --- */
     const passportEl = document.getElementById("editPassportNumber");
     const passportHint = document.getElementById("editPassportHint");
+    document.getElementById("editPassengerFullName")
+        ?.classList.toggle("input-error", nameMissing);
 
     passportEl.classList.toggle("input-error", passportMissing);
 
@@ -423,25 +535,36 @@ async function saveBookingEdit() {
     }
 
     if (missing.length > 0) {
+        // הודעה בולטת צמוד לכפתור השמירה + הודעה רגילה בראש החלון
+        showValidationBanner(missing);
         showMessage(msgEl,
             `חסרים פרטים: ${missing.join(", ")}. יש למלא לפני השמירה.`);
         return;
     }
+    hideValidationBanner();
 
     /* --- ולידציה: מספר מושבים סופי חייב להיות זהה למקורי --- */
     if (selectedSeatIds.size > mySeatIds.size) {
+        const extra = selectedSeatIds.size - mySeatIds.size;
+        // המקרה הנפוץ: הלקוח לחץ על מושב פנוי חדש בלי לשחרר את הישן
         showMessage(msgEl,
-            `לא ניתן לאשר: נבחרו ${selectedSeatIds.size} מושבים, ` +
-            `אך בהזמנה יש ${mySeatIds.size}. ` +
-            `כדי להחליף — לחצו תחילה על המושב הקיים, ואחר כך על המושב החדש.`);
+            `יש לבטל את המושב הקודם לפני בחירת מושב חלופי. ` +
+            `לחצו על המושב הקיים שלכם (יסומן "ישוחרר"), ואז בחרו את המושב החדש.`);
+        showValidationBanner(["ביטול המושב הקודם"],
+            `נבחרו ${extra} מושבים יותר מהמותר בהזמנה זו.`);
         return;
     }
 
     if (selectedSeatIds.size < mySeatIds.size) {
+        const releasedCount = mySeatIds.size - selectedSeatIds.size;
         showMessage(msgEl,
-            `לא ניתן לאשר: נבחרו ${selectedSeatIds.size} מושבים בלבד, ` +
-            `אך בהזמנה יש ${mySeatIds.size}. ` +
-            `יש לבחור מושב חלופי לכל מושב שמשוחרר.`);
+            "לא ניתן לאשר: שוחררו מושבים בלי לבחור חלופי במקומם. " +
+            (releasedCount === 1
+                ? "יש לבחור מושב פנוי אחד כתחליף."
+                : `יש לבחור ${releasedCount} מושבים פנויים כתחליף.`));
+        showValidationBanner([
+            releasedCount === 1 ? "בחירת מושב חלופי" : "בחירת מושבים חלופיים"
+        ]);
         return;
     }
 
@@ -555,6 +678,9 @@ document.getElementById("editPassportNumber")
         if (navLogin) navLogin.hidden = true;
         if (navLogout) navLogout.hidden = false;
         if (navMyBookings) navMyBookings.hidden = false;
+    } else {
+        // בלי התחברות — "ההזמנות שלי" מוסתר ו"התחברות" משמשת ככתובת הראשית
+        if (navMyBookings) navMyBookings.hidden = true;
     }
     if (navLogout) {
         navLogout.addEventListener("click", e => {

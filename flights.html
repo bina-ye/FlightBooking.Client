@@ -1,101 +1,136 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>כל הטיסות | FLYBY</title>
-  <link rel="icon" type="image/png" href="images/לוגו.png">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/flights.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>כל הטיסות | FLYBY</title>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/flights.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a href="index.html" class="logo">
-        <img src="images/לוגו האתר.jpg" alt="FlightBooking" class="logo-img">
-      </a>
-      <nav class="main-nav nav">
-        <a href="index.html">חיפוש טיסות</a>
-        <a href="flights.html" class="active">כל הטיסות</a>
-        <a href="my-bookings.html" id="navMyBookings" hidden>ההזמנות שלי</a>
-        <a href="admin.html" id="navAdmin" hidden>הוספת טיסה</a>
-        <a href="login.html" id="navLogin">התחברות</a>
-        <a href="#" id="navLogout" hidden>התנתקות</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="container">
-
-    <section class="page-head">
-      <span class="page-eyebrow">לוח טיסות</span>
-      <h1>כל הטיסות</h1>
-      <p class="subtitle" id="flightsMeta">טוען טיסות…</p>
-    </section>
-
-    <section class="filters" aria-label="סינון טיסות">
-      <div class="filters-head">
-        <span class="filters-title">
-          <svg class="filters-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20l-3.6-3.6"></path>
-          </svg>
-          סינון תוצאות
-        </span>
-        <span class="filters-hint">אפשר לסנן לפי נמל, תאריך או שניהם</span>
-      </div>
-
-      <div class="filters-row">
-        <input id="filterOrigin" type="text" maxlength="3" placeholder="מוצא" aria-label="קוד נמל מוצא">
-        <input id="filterDestination" type="text" maxlength="3" placeholder="יעד" aria-label="קוד נמל יעד">
-        <label class="filter-date">
-          <span>מתאריך</span>
-          <input id="filterFrom" type="date" aria-label="מתאריך יציאה">
-        </label>
-        <label class="filter-date">
-          <span>עד תאריך</span>
-          <input id="filterTo" type="date" aria-label="עד תאריך יציאה">
-        </label>
-        <div class="filters-actions">
-          <button id="filterBtn" class="btn btn-primary" type="button">סנן</button>
-          <button id="clearFilterBtn" class="btn btn-outline" type="button">נקה</button>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="index.html" class="logo" aria-label="FLYBY — טיסות בקלות">
+                <span class="logo__mark" aria-hidden="true">
+                    <svg viewBox="0 0 200 200" fill="currentColor">
+                        <path d="M172 92a8 8 0 0 0-8-8h-40l-40-46h-14l20 46H52l-12-14H28l8 24-8 24h12l12-14h38l-20 46h14l40-46h40a8 8 0 0 0 8-8z"/>
+                    </svg>
+                </span>
+                <span class="logo__word">FLYBY</span>
+            </a>
+            <nav class="nav">
+                <a href="index.html">חיפוש טיסות</a>
+                <a href="flights.html" class="active">כל הטיסות</a>
+                <a href="my-bookings.html" id="navMyBookings" class="nav-cta" hidden>ההזמנות שלי</a>
+                <a href="admin.html" id="navAdmin" hidden>הוספת טיסה</a>
+                <a href="admin-bookings.html" id="navAdminBookings" hidden>כל ההזמנות</a>
+                <a href="login.html" id="navLogin" class="nav-cta">התחברות</a>
+                <a href="#" id="navLogout" hidden>התנתקות</a>
+            </nav>
         </div>
-      </div>
-    </section>
+    </header>
 
-    <div id="message" class="message hidden"></div>
+    <main>
+        <div class="container">
 
-    <div id="flightsList" class="flight-list"></div>
+            <section class="page-head">
+                <span class="page-eyebrow">לוח טיסות</span>
+                <h1>כל הטיסות</h1>
+                <p class="subtitle" id="flightsMeta">טוען טיסות…</p>
+            </section>
 
-    <div id="pagination" class="pagination"></div>
-  </main>
+            <section class="filters" aria-label="סינון טיסות">
+                <div class="filters-head">
+                    <span class="filters-title">
+                        <svg class="filters-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="7"></circle>
+                            <path d="M20 20l-3.6-3.6"></path>
+                        </svg>
+                        סינון תוצאות
+                    </span>
+                    <span class="filters-hint">אפשר לסנן לפי נמל, תאריך או שניהם</span>
+                </div>
 
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-inner">
-        <a href="index.html" class="footer-logo">
-          <img src="images/לוגו האתר.jpg" alt="FlightBooking" class="footer-logo-img">
-        </a>
-        <nav class="footer-links">
-          <a href="index.html">חיפוש טיסות</a>
-          <a href="flights.html">כל הטיסות</a>
-          <a href="my-bookings.html">ההזמנות שלי</a>
-        </nav>
-        <span class="footer-text">טיסות בקלות, מכל מקום</span>
-      </div>
-      <div class="footer-bottom">
-        <span>FLYBY &copy; 2026</span>
-        <span>כל הזכויות שמורות</span>
-      </div>
-    </div>
-  </footer>
+                <div class="filters-row">
+                    <input id="filterOrigin" type="text" maxlength="3" placeholder="מוצא" aria-label="קוד נמל מוצא">
+                    <input id="filterDestination" type="text" maxlength="3" placeholder="יעד" aria-label="קוד נמל יעד">
+                    <label class="filter-date">
+                        <span>מתאריך</span>
+                        <input id="filterFrom" type="date" aria-label="מתאריך יציאה">
+                    </label>
+                    <label class="filter-date">
+                        <span>עד תאריך</span>
+                        <input id="filterTo" type="date" aria-label="עד תאריך יציאה">
+                    </label>
+                    <div class="filters-actions">
+                        <button id="filterBtn" class="btn btn-primary" type="button">סנן</button>
+                        <button id="clearFilterBtn" class="btn btn-outline" type="button">נקה</button>
+                    </div>
+                </div>
+            </section>
 
-  <script src="js/api.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/all-flights.js"></script>
+            <div id="message" class="message hidden"></div>
+
+            <div id="flightsList" class="flight-list"></div>
+
+            <div id="pagination" class="pagination"></div>
+
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-cta">
+                <div>
+                    <span class="footer-cta-kicker">זמינות בזמן אמת</span>
+                    <h3>מצאו את הטיסה שמתאימה לכם</h3>
+                    <p>סננו לפי נמל ותאריך, ובחרו מושב ישירות מהכרטיס.</p>
+                </div>
+                <a href="index.html#search" class="btn btn-gold">חיפוש טיסות ←</a>
+            </div>
+
+            <div class="footer-top">
+                <div>
+                    <div class="footer-brand">
+                        <span class="logo__mark" aria-hidden="true">
+                            <svg viewBox="0 0 200 200" fill="currentColor">
+                                <path d="M172 92a8 8 0 0 0-8-8h-40l-40-46h-14l20 46H52l-12-14H28l8 24-8 24h12l12-14h38l-20 46h14l40-46h40a8 8 0 0 0 8-8z"/>
+                            </svg>
+                        </span>
+                        <span class="logo__word">FLYBY</span>
+                    </div>
+                    <div class="footer-brand-rule"></div>
+                    <p class="footer-about">טיסות בקלות, מכל מקום</p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>ניווט</h4>
+                    <a href="index.html">חיפוש טיסות</a>
+                    <a href="flights.html">כל הטיסות</a>
+                    <a href="my-bookings.html">ההזמנות שלי</a>
+                </div>
+
+                <div class="footer-col">
+                    <h4>מידע</h4>
+                    <a href="login.html">התחברות</a>
+                    <a href="register.html">הרשמה</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>FLYBY &copy; 2026</span>
+                <span>כל הזכויות שמורות</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/all-flights.js"></script>
 </body>
 </html>

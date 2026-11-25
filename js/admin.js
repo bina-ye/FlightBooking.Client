@@ -56,12 +56,34 @@ flightForm.addEventListener("submit", async event => {
         return;
     }
 
+    // בדיקות מקדימות שתואמות את השרת — כדי לקבל הודעה ברורה ולא 400 סתמי
+    const dep = departureTime ? new Date(departureTime) : null;
+    const arr = arrivalTime ? new Date(arrivalTime) : null;
+
+    if (!dep || Number.isNaN(dep.getTime()) || !arr || Number.isNaN(arr.getTime())) {
+        showAdminMessage("יש להזין זמן המראה וזמן נחיתה תקינים.");
+        return;
+    }
+    if (dep <= new Date()) {
+        showAdminMessage("זמן ההמראה חייב להיות בעתיד.");
+        return;
+    }
+    if (arr <= dep) {
+        showAdminMessage("זמן הנחיתה חייב להיות אחרי זמן ההמראה.");
+        return;
+    }
+    if (!Number.isFinite(Number(price)) || Number(price) < 1 || Number(price) > 100000) {
+        showAdminMessage("המחיר חייב להיות בין 1 ל-100,000 ש\"ח.");
+        return;
+    }
+
     const payload = {
         flightNumber,
         originCode,
         destinationCode,
-        departureTime: new Date(departureTime).toISOString(),
-        arrivalTime: new Date(arrivalTime).toISOString(),
+        // datetime-local מחזיר שעה מקומית; dep/arr נבנו ואומתו למעלה
+        departureTime: dep.toISOString(),
+        arrivalTime: arr.toISOString(),
         price: Number(price),
         gate,
         aircraftType
@@ -85,7 +107,15 @@ flightForm.addEventListener("submit", async event => {
         } else if (error.status === 403) {
             showAdminMessage("אין לך הרשאת מנהל.");
         } else if (error.status === 400) {
-            showAdminMessage(error.message);
+            // 400 יכול לכלול מספר שגיאות ולידציה — מציגים את כולן, לא רק את הראשונה
+            const body = error.body;
+            const details = body?.errors
+                ? Object.entries(body.errors)
+                    .map(([field, msgs]) => `${field}: ${[].concat(msgs).join(", ")}`)
+                    .join(" · ")
+                : null;
+            showAdminMessage(details || error.message);
+            console.warn("400 ValidationProblem:", body);
         } else {
             showAdminMessage("אירעה שגיאה. נסו שוב או פנו לתמיכה.");
             console.error(error);

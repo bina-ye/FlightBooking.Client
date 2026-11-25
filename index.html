@@ -4,124 +4,229 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FLYBY — חיפוש טיסות</title>
- <link rel="icon" type="image/png" href="images/לוגו.png">
-   <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header class="site-header">
         <div class="container header-inner">
-            <a href="index.html" class="logo"><img src="images/לוגו האתר.jpg" alt="FlightBooking" class="logo-img"></a>
+            <a href="index.html" class="logo" aria-label="FLYBY — טיסות בקלות">
+                <span class="logo__mark" aria-hidden="true">
+                    <svg viewBox="0 0 200 200" fill="currentColor">
+                        <path d="M172 92a8 8 0 0 0-8-8h-40l-40-46h-14l20 46H52l-12-14H28l8 24-8 24h12l12-14h38l-20 46h14l40-46h40a8 8 0 0 0 8-8z"/>
+                    </svg>
+                </span>
+                <span class="logo__word">FLYBY</span>
+            </a>
 
             <nav class="nav">
                 <a href="index.html" class="active">חיפוש טיסות</a>
                 <a href="flights.html">כל הטיסות</a>
-                <a href="my-bookings.html" id="navMyBookings" hidden>ההזמנות שלי</a>
+                <a href="my-bookings.html" id="navMyBookings" class="nav-cta" hidden>ההזמנות שלי</a>
                 <a href="admin.html" id="navAdmin" hidden>הוספת טיסה</a>
-                <a href="login.html" id="navLogin">התחברות</a>
+                <a href="admin-bookings.html" id="navAdminBookings" hidden>כל ההזמנות</a>
+                <a href="login.html" id="navLogin" class="nav-cta">התחברות</a>
                 <a href="#" id="navLogout" hidden>התנתקות</a>
             </nav>
         </div>
     </header>
 
-    <main class="container">
-        <section class="hero">
-            <div class="hero-content">
-                <span class="eyebrow">הטיסה הבאה שלכם</span>
-                <h1>לאן טסים היום?</h1>
-                <p class="hero-sub">
-                    מצאו טיסות ליותר מ-40 יעדים, עם מחירים שקופים, בחירת מושבים והזמנה בדקות ספורות.
-                </p>
-                <div class="hero-actions">
-                    <a href="#search" class="btn btn-primary">חיפוש טיסות</a>
-                    <a href="flights.html" class="btn btn-secondary">לכל הטיסות</a>
+    <main>
+        <div class="container">
+
+            <section class="hero">
+                <!-- מפת נתיבים — המוטיב הייחודי -->
+                <div class="hero-map" aria-hidden="true">
+                    <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+                        <defs>
+                            <path id="routeA" d="M80 560 C 320 400, 520 200, 760 300 S 1080 180, 1160 120"/>
+                            <path id="routeB" d="M1160 600 C 900 520, 660 460, 380 380 S 120 220, 40 160"/>
+                            <path id="routeC" d="M200 80 C 420 260, 700 320, 900 240 S 1100 300, 1180 460"/>
+                        </defs>
+
+                        <g class="grid">
+                            <line x1="0" y1="140" x2="1200" y2="140"/>
+                            <line x1="0" y1="280" x2="1200" y2="280"/>
+                            <line x1="0" y1="420" x2="1200" y2="420"/>
+                            <line x1="0" y1="560" x2="1200" y2="560"/>
+                            <line x1="200" y1="0" x2="200" y2="700"/>
+                            <line x1="400" y1="0" x2="400" y2="700"/>
+                            <line x1="600" y1="0" x2="600" y2="700"/>
+                            <line x1="800" y1="0" x2="800" y2="700"/>
+                            <line x1="1000" y1="0" x2="1000" y2="700"/>
+                        </g>
+
+                        <use href="#routeA" class="route"/>
+                        <use href="#routeB" class="route"/>
+                        <use href="#routeC" class="route"/>
+                        <use href="#routeA" class="route route--solid"/>
+
+                        <g class="glow">
+                            <circle cx="80" cy="560" r="40"/>
+                            <circle cx="80" cy="560" r="80" opacity=".5"/>
+                            <circle cx="80" cy="560" r="120" opacity=".25"/>
+                        </g>
+                        <circle cx="80" cy="560" r="5" class="node"/>
+
+                        <circle cx="760" cy="300" r="3.5" class="node"/>
+                        <circle cx="1160" cy="120" r="3.5" class="node"/>
+                        <circle cx="380" cy="380" r="3.5" class="node"/>
+                        <circle cx="900" cy="240" r="3.5" class="node"/>
+
+                        <g class="flyer-plane">
+                            <g class="flyer">
+                                <circle r="15" class="plane-halo"/>
+                                <g transform="scale(0.085) translate(0 -100)">
+                                    <path class="plane-shape"
+                                          d="M172 92a8 8 0 0 0-8-8h-40l-40-46h-14l20 46H52l-12-14H28l8 24-8 24h12l12-14h38l-20 46h14l40-46h40a8 8 0 0 0 8-8z"/>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
                 </div>
+
+                <div class="hero-inner">
+                    <div>
+                        <p class="hero-eyebrow">הטיסה הבאה שלכם</p>
+                        <h1>
+                            <span class="line-1">לאן טסים</span>
+                            <span class="line-2">היום<em>?</em></span>
+                        </h1>
+                        <p class="hero-sub">
+                            מצאו טיסות ליותר מ-40 יעדים, עם מחירים שקופים, בחירת מושבים והזמנה בדקות ספורות.
+                        </p>
+                        <div class="hero-actions">
+                            <a href="#search" class="btn btn-primary">חיפוש טיסות</a>
+                            <a href="flights.html" class="btn btn-outline">לכל הטיסות</a>
+                        </div>
+                    </div>
+
+                    <div class="hero-mark" aria-hidden="true">
+                        <span class="ring"></span>
+                        <span class="ring ring--inner"></span>
+                        <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M172 92a8 8 0 0 0-8-8h-40l-40-46h-14l20 46H52l-12-14H28l8 24-8 24h12l12-14h38l-20 46h14l40-46h40a8 8 0 0 0 8-8z"
+                                  stroke-width="2.2"/>
+                            <circle cx="100" cy="100" r="86" stroke-width=".8" opacity=".25"/>
+                        </svg>
+                        <span class="mark-caption">FLYBY · TEL AVIV</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="search-card" id="search" aria-label="חיפוש טיסות">
+                <h2>חיפוש טיסה</h2>
+
+                <form id="searchForm" class="search-form">
+                    <div class="field">
+                        <label for="origin">מוצא</label>
+                        <select id="origin" name="origin" required>
+                            <option value="TLV" selected>תל אביב (TLV)</option>
+                            <option value="JFK">ניו יורק (JFK)</option>
+                            <option value="LHR">לונדון (LHR)</option>
+                            <option value="CDG">פריז (CDG)</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="destination">יעד</label>
+                        <select id="destination" name="destination" required>
+                            <option value="TLV">תל אביב (TLV)</option>
+                            <option value="JFK" selected>ניו יורק (JFK)</option>
+                            <option value="LHR">לונדון (LHR)</option>
+                            <option value="CDG">פריז (CDG)</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="departureDate">תאריך יציאה</label>
+                        <input type="date" id="departureDate" name="departureDate" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">חיפוש</button>
+                </form>
+
+                <!-- aria-live: קורא מסך יקריא את הודעת החיפוש/השגיאה -->
+                <div id="searchMessage" class="message" role="status" aria-live="polite" style="display:none"></div>
+            </section>
+
+            <div class="stats">
+                <div class="stat"><strong>40+</strong><span>יעדים בעולם</span></div>
+                <div class="stat"><strong>1,200</strong><span>טיסות בחודש</span></div>
+                <div class="stat"><strong>24/6</strong><span>שירות לקוחות</span></div>
+                <div class="stat"><strong>100%</strong><span>שביעות רצון</span></div>
             </div>
-        </section>
 
-        <section class="search-card" id="search">
-            <h2>חיפוש טיסות</h2>
+            <section class="quick-links" aria-label="קישורים מהירים">
+                <a href="flights.html" class="quick-link">
+                    <strong>כל הטיסות</strong>
+                    <span>עיון בכל לוח הטיסות</span>
+                </a>
+                <a href="my-bookings.html" class="quick-link">
+                    <strong>ההזמנות שלי</strong>
+                    <span>צפייה ועריכה של הזמנות</span>
+                </a>
+                <a href="login.html" class="quick-link">
+                    <strong>אזור אישי</strong>
+                    <span>התחברות לחשבון</span>
+                </a>
+            </section>
 
-            <form id="searchForm" class="search-form">
-                <div class="field">
-                    <label for="origin">מוצא</label>
-                    <select id="origin" name="origin" required>
-                        <option value="TLV" selected>תל אביב (TLV)</option>
-                        <option value="JFK">ניו יורק (JFK)</option>
-                        <option value="LHR">לונדון (LHR)</option>
-                        <option value="CDG">פריז (CDG)</option>
-                    </select>
-                </div>
+            <section id="resultsSection" hidden>
+                <h2 class="results-title">טיסות זמינות</h2>
 
-                <div class="field">
-                    <label for="destination">יעד</label>
-                    <select id="destination" name="destination" required>
-                        <option value="TLV">תל אביב (TLV)</option>
-                        <option value="JFK" selected>ניו יורק (JFK)</option>
-                        <option value="LHR">לונדון (LHR)</option>
-                        <option value="CDG">פריז (CDG)</option>
-                    </select>
-                </div>
+                <div id="results" class="results-grid"></div>
+                <div id="pagination" class="pagination"></div>
+            </section>
 
-                <div class="field">
-                    <label for="departureDate">תאריך יציאה</label>
-                    <input type="date" id="departureDate" name="departureDate" required>
-                </div>
-
-                <button type="submit" class="btn btn-primary">חיפוש</button>
-            </form>
-
-            <div id="searchMessage" class="message" style="display:none"></div>
-        </section>
-
-        <div class="trust-strip">
-            <div class="trust-item"><strong>40+</strong><span>יעדים בעולם</span></div>
-            <div class="trust-item"><strong>1,200</strong><span>טיסות בחודש</span></div>
-            <div class="trust-item"><strong>24/6</strong><span>שירות לקוחות</span></div>
         </div>
-
-        <section class="quick-links">
-            <a href="flights.html" class="quick-link">
-                <strong>כל הטיסות</strong>
-                <span>עיון בכל לוח הטיסות</span>
-            </a>
-            <a href="my-bookings.html" class="quick-link">
-                <strong>ההזמנות שלי</strong>
-                <span>צפייה ועריכה של הזמנות</span>
-            </a>
-            <a href="login.html" class="quick-link">
-                <strong>אזור אישי</strong>
-                <span>התחברות לחשבון</span>
-            </a>
-        </section>
-
-        <section id="resultsSection" hidden>
-            <h2>טיסות זמינות</h2>
-            <div id="results" class="results-grid"></div>
-            <div id="pagination" class="pagination"></div>
-        </section>
     </main>
 
     <footer class="site-footer">
         <div class="container">
-            <div class="footer-inner">
-                <a href="index.html" class="footer-logo">
-                    <img src="images/לוגו האתר.jpg" alt="FlightBooking" class="footer-logo-img">
-                </a>
 
-                <nav class="footer-links">
+            <div class="footer-cta">
+                <div>
+                    <span class="footer-cta-kicker">הזמנת טיסה</span>
+                    <h3>מחפשים את הטיסה הבאה?</h3>
+                    <p>בחרו מוצא, יעד ותאריך — ותוכלו לראות זמינות ומחירים בזמן אמת.</p>
+                </div>
+                <a href="#search" class="btn btn-gold">חיפוש טיסות ←</a>
+            </div>
+
+            <div class="footer-top">
+                <div>
+                    <div class="footer-brand">
+                        <span class="logo__mark" aria-hidden="true">
+                            <svg viewBox="0 0 200 200" fill="currentColor">
+                                <path d="M172 92a8 8 0 0 0-8-8h-40l-40-46h-14l20 46H52l-12-14H28l8 24-8 24h12l12-14h38l-20 46h14l40-46h40a8 8 0 0 0 8-8z"/>
+                            </svg>
+                        </span>
+                        <span class="logo__word">FLYBY</span>
+                    </div>
+                    <div class="footer-brand-rule"></div>
+                    <p class="footer-about">טיסות בקלות, מכל מקום</p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>ניווט</h4>
                     <a href="index.html">חיפוש טיסות</a>
                     <a href="flights.html">כל הטיסות</a>
                     <a href="my-bookings.html">ההזמנות שלי</a>
-                </nav>
+                </div>
 
-                <span class="footer-text">טיסות בקלות, מכל מקום</span>
+                <div class="footer-col">
+                    <h4>מידע</h4>
+                    <a href="login.html">התחברות</a>
+                    <a href="register.html">הרשמה</a>
+                </div>
             </div>
 
             <div class="footer-bottom">
-                <span>FlightBooking &copy; 2026</span>
+                <span>FLYBY &copy; 2026</span>
                 <span>כל הזכויות שמורות</span>
             </div>
         </div>

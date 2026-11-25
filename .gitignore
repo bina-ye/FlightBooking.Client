@@ -1,0 +1,27 @@
+# ---------- OS / IDE ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+*.swp
+
+# ---------- קבצים זמניים ----------
+_tmp_*
+*.bak
+*.orig
+*.rej
+
+# ---------- שרת .NET (אם מריצים מכאן) ----------
+bin/
+obj/
+*.user
+*.suo
+.vs/
+TestResults/
+
+# ---------- סודות / קונפיגורציה מקומית ----------
+.env
+.env.*
+
+# ---------- Node ----------
+node_modules/

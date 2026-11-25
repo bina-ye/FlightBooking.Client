@@ -57,22 +57,83 @@ function renderSeats(seats) {
         return;
     }
 
-    seats.forEach(seat => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "seat";
-        btn.textContent = seat.seatNumber;
-        btn.dataset.seatId = seat.id;
+    // תצוגה בשורות ועמודות: כל שורת מושבים בשורה נפרדת
+    const parsed = seats.map(seat => ({ seat, p: parseSeatNumber(seat.seatNumber) }));
 
-        if (!seat.isAvailable) {
-            btn.classList.add("booked");
-            btn.disabled = true;
-        } else {
-            btn.addEventListener("click", () => toggleSeat(seat.id, btn));
-        }
+    if (parsed.some(item => !item.p)) {
+        // מספרי מושב לא תקניים — מציגים ברשת רגילה כדי לא לשבור את המסך
+        seats.forEach(seat => seatsGrid.appendChild(seatButtonEl(seat)));
+        return;
+    }
 
-        seatsGrid.appendChild(btn);
+    const rows = [...new Set(parsed.map(i => i.p.row))].sort((a, b) => a - b);
+    const cols = [...new Set(parsed.map(i => i.p.col))].filter(Boolean).sort();
+    const byKey = new Map(parsed.map(i => [`${i.p.row}${i.p.col}`, i.seat]));
+
+    seatsGrid.classList.add("seat-map");
+    seatsGrid.style.setProperty("--seat-cols", String(Math.max(cols.length, 1)));
+
+    // שורת כותרות עמודות
+    const head = document.createElement("div");
+    head.className = "seat-map-row seat-map-head";
+    head.setAttribute("aria-hidden", "true");
+    cols.forEach(c => {
+        const label = document.createElement("span");
+        label.className = "seat-col-label";
+        label.textContent = c;
+        head.appendChild(label);
     });
+    head.appendChild(document.createElement("span")).className = "seat-row-label";
+    seatsGrid.appendChild(head);
+
+    rows.forEach(row => {
+        const rowEl = document.createElement("div");
+        rowEl.className = "seat-map-row";
+
+        cols.forEach((c, idx) => {
+            const cell = document.createElement("span");
+            cell.className = "seat-map-cell" + (idx === Math.floor(cols.length / 2) ? " seat-map-aisle" : "");
+
+            const seat = byKey.get(`${row}${c}`);
+            if (seat) {
+                cell.appendChild(seatButtonEl(seat));
+            } else {
+                const empty = document.createElement("span");
+                empty.className = "seat-map-empty";
+                empty.setAttribute("aria-hidden", "true");
+                cell.appendChild(empty);
+            }
+            rowEl.appendChild(cell);
+        });
+
+        const label = document.createElement("span");
+        label.className = "seat-row-label";
+        label.textContent = String(row);
+        rowEl.appendChild(label);
+
+        seatsGrid.appendChild(rowEl);
+    });
+}
+
+function parseSeatNumber(seatNumber) {
+    const m = String(seatNumber ?? "").trim().match(/^(\d+)\s*([A-Za-zא-ת]?)$/);
+    return m ? { row: Number(m[1]), col: m[2].toUpperCase() } : null;
+}
+
+function seatButtonEl(seat) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "seat";
+    btn.textContent = seat.seatNumber;
+    btn.dataset.seatId = seat.id;
+
+    if (!seat.isAvailable) {
+        btn.classList.add("booked");
+        btn.disabled = true;
+    } else {
+        btn.addEventListener("click", () => toggleSeat(seat.id, btn));
+    }
+    return btn;
 }
 
 // בחירה וביטול בחירה

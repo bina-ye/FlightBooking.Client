@@ -4,95 +4,134 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FLYBY — הוספת טיסה</title>
-     <link rel="icon" type="image/jpg" href="images/לוגו.png">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header class="site-header">
         <div class="container header-inner">
-          <a href="index.html" class="logo">
-    <img src="images/לוגו האתר.jpg" alt="FlightBooking" class="logo-img">
-</a> 
+            <a href="index.html" class="logo" aria-label="FLYBY — טיסות בקלות">
+                <span class="logo__mark" aria-hidden="true">
+                    <svg viewBox="0 0 200 200" fill="currentColor">
+                        <path d="M172 92a8 8 0 0 0-8-8h-40l-40-46h-14l20 46H52l-12-14H28l8 24-8 24h12l12-14h38l-20 46h14l40-46h40a8 8 0 0 0 8-8z"/>
+                    </svg>
+                </span>
+                <span class="logo__word">FLYBY</span>
+            </a>
             <nav class="nav">
                 <a href="index.html">חיפוש טיסות</a>
                 <a href="flights.html">כל הטיסות</a>
-                <a href="my-bookings.html" id="navMyBookings" hidden>ההזמנות שלי</a>
+                <a href="my-bookings.html" id="navMyBookings" class="nav-cta" hidden>ההזמנות שלי</a>
                 <a href="admin.html" id="navAdmin" hidden>הוספת טיסה</a>
-                <a href="login.html" id="navLogin">התחברות</a>
+                <a href="admin-bookings.html" id="navAdminBookings" hidden>כל ההזמנות</a>
+                <a href="login.html" id="navLogin" class="nav-cta">התחברות</a>
                 <a href="#" id="navLogout" hidden>התנתקות</a>
             </nav>
         </div>
     </header>
 
-    <main class="container">
-        <h1>הוספת טיסה חדשה</h1>
+    <main>
+        <div class="container">
+            <section class="page-head">
+                <span class="page-eyebrow">ניהול</span>
+                <h1>הוספת טיסה חדשה</h1>
+                <p class="subtitle">טופס זמין למשתמשים בעלי הרשאת מנהל</p>
+            </section>
 
-        <div id="adminNotice" class="message message-error" style="display:none">
-            אין לך הרשאת מנהל. <a href="login.html">להתחברות</a>
+            <div id="adminNotice" class="message message-error" style="display:none">
+                אין לך הרשאת מנהל. <a href="login.html">להתחברות</a>
+            </div>
+
+            <div id="adminMessage" class="message" style="display:none"></div>
+
+            <form id="flightForm" class="form-card" hidden>
+                <div class="form-grid">
+                    <div class="form-row">
+                        <label for="flightNumber">מספר טיסה</label>
+                        <input type="text" id="flightNumber" required placeholder="LY999">
+                    </div>
+                    <div class="form-row">
+                        <label for="originCode">מוצא (קוד)</label>
+                        <input type="text" id="originCode" required maxlength="3" placeholder="TLV">
+                    </div>
+                    <div class="form-row">
+                        <label for="destinationCode">יעד (קוד)</label>
+                        <input type="text" id="destinationCode" required maxlength="3" placeholder="JFK">
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-row">
+                        <label for="departureTime">זמן המראה</label>
+                        <input type="datetime-local" id="departureTime" required>
+                    </div>
+                    <div class="form-row">
+                        <label for="arrivalTime">זמן נחיתה</label>
+                        <input type="datetime-local" id="arrivalTime" required>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-row">
+                        <label for="price">מחיר (₪)</label>
+                        <input type="number" id="price" required min="1" step="1" placeholder="1500">
+                    </div>
+                    <div class="form-row">
+                        <label for="gate">שער</label>
+                        <input type="text" id="gate" required maxlength="10" placeholder="B7">
+                    </div>
+                    <div class="form-row">
+                        <label for="aircraftType">סוג מטוס</label>
+                        <input type="text" id="aircraftType" required maxlength="50" placeholder="Boeing 787">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">צור טיסה</button>
+                </div>
+            </form>
         </div>
-
-        <div id="adminMessage" class="message" style="display:none"></div>
-
-        <form id="flightForm" class="search-form" hidden>
-            <div class="form-row">
-                <label>מספר טיסה
-                    <input type="text" id="flightNumber" required placeholder="LY999">
-                </label>
-                <label>מוצא (קוד)
-                    <input type="text" id="originCode" required maxlength="3" placeholder="TLV">
-                </label>
-                <label>יעד (קוד)
-                    <input type="text" id="destinationCode" required maxlength="3" placeholder="JFK">
-                </label>
-            </div>
-
-            <div class="form-row">
-                <label>זמן המראה
-                    <input type="datetime-local" id="departureTime" required>
-                </label>
-                <label>זמן נחיתה
-                    <input type="datetime-local" id="arrivalTime" required>
-                </label>
-            </div>
-
-            <div class="form-row">
-                <label>מחיר (₪)
-                    <input type="number" id="price" required min="1" step="1" placeholder="1500">
-                </label>
-                <label>שער
-                    <input type="text" id="gate" required maxlength="10" placeholder="B7">
-                </label>
-                <label>סוג מטוס
-                    <input type="text" id="aircraftType" required maxlength="50" placeholder="Boeing 787">
-                </label>
-            </div>
-
-            <button type="submit" class="btn btn-primary">צור טיסה</button>
-        </form>
     </main>
 
-   <footer class="site-footer">
-  <div class="container">
-    <div class="footer-inner">
-      <a href="index.html" class="footer-logo">
-        <img src="images/לוגו האתר.jpg" alt="FlightBooking" class="footer-logo-img">
-      </a>
-      <nav class="footer-links">
-        <a href="index.html">חיפוש טיסות</a>
-        <a href="flights.html">כל הטיסות</a>
-        <a href="my-bookings.html">ההזמנות שלי</a>
-      </nav>
-      <span class="footer-text">טיסות בקלות, מכל מקום</span>
-    </div>
-    <div class="footer-bottom">
-      <span>FLYBY &copy; 2026</span>
-      <span>כל הזכויות שמורות</span>
-    </div>
-  </div>
-</footer>
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-top">
+                <div>
+                    <div class="footer-brand">
+                        <span class="logo__mark" aria-hidden="true">
+                            <svg viewBox="0 0 200 200" fill="currentColor">
+                                <path d="M172 92a8 8 0 0 0-8-8h-40l-40-46h-14l20 46H52l-12-14H28l8 24-8 24h12l12-14h38l-20 46h14l40-46h40a8 8 0 0 0 8-8z"/>
+                            </svg>
+                        </span>
+                        <span class="logo__word">FLYBY</span>
+                    </div>
+                    <div class="footer-brand-rule"></div>
+                    <p class="footer-about">טיסות בקלות, מכל מקום</p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>ניווט</h4>
+                    <a href="index.html">חיפוש טיסות</a>
+                    <a href="flights.html">כל הטיסות</a>
+                    <a href="my-bookings.html">ההזמנות שלי</a>
+                </div>
+
+                <div class="footer-col">
+                    <h4>מידע</h4>
+                    <a href="login.html">התחברות</a>
+                    <a href="register.html">הרשמה</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>FLYBY &copy; 2026</span>
+                <span>כל הזכויות שמורות</span>
+            </div>
+        </div>
+    </footer>
 
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>

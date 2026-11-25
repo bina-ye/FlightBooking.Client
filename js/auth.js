@@ -39,36 +39,13 @@ if (loginForm) {
 }
 
 // ===== עדכון ניווט בכל דף =====
-// (function updateNav() {
-//     const navLogin = document.getElementById("navLogin");
-//     const navLogout = document.getElementById("navLogout");
-//     const navMyBookings = document.getElementById("navMyBookings");
-
-//     if (!navLogin) return;
-
-//     if (isLoggedIn()) {
-//         navLogin.hidden = true;
-//         if (navLogout) navLogout.hidden = false;
-//         if (navMyBookings) navMyBookings.hidden = false;
-//     } else {
-//         navLogin.hidden = false;
-//         if (navLogout) navLogout.hidden = true;
-//         if (navMyBookings) navMyBookings.hidden = true;
-//     }
-
-//     if (navLogout) {
-//         navLogout.addEventListener("click", event => {
-//             event.preventDefault();
-//             clearToken();
-//             window.location.href = "index.html";
-//         });
-//     }
-// })();
-(function updateNav() {
+// "התחברות" ו"ההזמנות שלי" מתחלפות ביניהן; במקום שהקישור הנוכחי תמיד משמש ככפתור הגלולה.
+function updateNav() {
     const navLogin = document.getElementById("navLogin");
     const navLogout = document.getElementById("navLogout");
     const navMyBookings = document.getElementById("navMyBookings");
     const navAdmin = document.getElementById("navAdmin");
+    const navAdminBookings = document.getElementById("navAdminBookings");
 
     if (!navLogin) return;
 
@@ -77,28 +54,35 @@ if (loginForm) {
         if (navLogout) navLogout.hidden = false;
         if (navMyBookings) navMyBookings.hidden = false;
 
-        // חשיפת "הוספת טיסה" רק למנהל
-        if (navAdmin) {
-            try {
-                const payload = JSON.parse(atob(getToken().split(".")[1]));
-                const role = payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-                navAdmin.hidden = role !== "Admin";
-            } catch {
-                navAdmin.hidden = true;
-            }
+        // חשיפת קישורי הניהול רק למנהל
+        let isAdmin = false;
+        try {
+            const payload = JSON.parse(atob(getToken().split(".")[1]));
+            isAdmin = payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] === "Admin";
+        } catch {
+            isAdmin = false;
         }
+
+        if (navAdmin) navAdmin.hidden = !isAdmin;
+        if (navAdminBookings) navAdminBookings.hidden = !isAdmin;
     } else {
         navLogin.hidden = false;
         if (navLogout) navLogout.hidden = true;
         if (navMyBookings) navMyBookings.hidden = true;
         if (navAdmin) navAdmin.hidden = true;
+        if (navAdminBookings) navAdminBookings.hidden = true;
     }
+}
 
-    if (navLogout) {
-        navLogout.addEventListener("click", event => {
-            event.preventDefault();
-            clearToken();
-            window.location.href = "index.html";
-        });
-    }
-})();
+// "התנתקות" — התנהגות ברירת מחדל היא href="#" (זינוק לראש העמוד). מבטלים אותה,
+// מוחקים טוקן ומעבירים לדף הבית. האזנה ממוקדת על הקישור עצמו — פעם אחת בלבד.
+const navLogoutLink = document.getElementById("navLogout");
+navLogoutLink?.addEventListener("click", event => {
+    event.preventDefault();
+    clearToken();
+    window.location.href = "index.html";
+});
+
+// ריצה מיידית (הכותרת כבר במידע) + סינון כפול כשהדף מתרענן חזרה מהמטמון
+updateNav();
+window.addEventListener("pageshow", updateNav);

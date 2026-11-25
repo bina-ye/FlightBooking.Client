@@ -38,6 +38,13 @@ function formatPrice(amount) {
     }).format(amount);
 }
 
+// הגנה מפני הזרקת HTML — הערכים מוצגים ב-innerHTML
+function esc(str) {
+    return String(str ?? "").replace(/[&<>"']/g, c => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[c]));
+}
+
 // הצגת כרטיס טיסה
 function renderFlight(flight) {
     const card = document.createElement("article");
@@ -47,11 +54,11 @@ function renderFlight(flight) {
 
     card.innerHTML = `
         <div class="flight-main">
-            <div class="flight-number">${flight.flightNumber}</div>
+            <div class="flight-number">${esc(flight.flightNumber)}</div>
             <div class="flight-route">
-                <span class="airport">${flight.originCode}</span>
+                <span class="airport">${esc(flight.originCode)}</span>
                 <span class="arrow">←</span>
-                <span class="airport">${flight.destinationCode}</span>
+                <span class="airport">${esc(flight.destinationCode)}</span>
             </div>
             <div class="flight-time">
                 <span>יציאה: ${formatDateTime(flight.departureTime)}</span>
@@ -61,7 +68,7 @@ function renderFlight(flight) {
         <div class="flight-side">
             <div class="flight-price">${formatPrice(flight.price)}</div>
             <a class="btn btn-primary ${isClosed ? "disabled" : ""}"
-               href="${isClosed ? "#" : `seats.html?flightId=${flight.id}`}">
+               href="${isClosed ? "#" : `seats.html?flightId=${encodeURIComponent(flight.id)}`}">
                 ${isClosed ? "הטיסה המריאה" : "בחירת מושב"}
             </a>
         </div>
@@ -97,6 +104,20 @@ function renderPagination(pageNumber, totalPages) {
 }
 
 // ביצוע החיפוש
+// כרטיס שלד — תופס את אותו מקום כמו כרטיס טיסה אמיתי (כדי שהעמוד לא יקפוץ)
+function renderSkeleton() {
+    const card = document.createElement("article");
+    card.className = "flight-card skeleton-row";
+    card.setAttribute("aria-hidden", "true");
+    card.innerHTML = `
+        <div class="skeleton-stack">
+            <span class="skeleton-bar is-head"></span>
+            <span class="skeleton-bar is-line"></span>
+            <span class="skeleton-bar is-line is-short"></span>
+        </div>`;
+    return card;
+}
+
 async function runSearch() {
     const origin = document.getElementById("origin").value;
     const destination = document.getElementById("destination").value;
@@ -109,6 +130,12 @@ async function runSearch() {
         return;
     }
 
+    // שלדים — שומרים על גובה העמוד בזמן ההמתנה לשרת
+    resultsSection.hidden = false;
+    resultsEl.innerHTML = "";
+    paginationEl.innerHTML = "";
+    for (let i = 0; i < pageSize; i++) resultsEl.appendChild(renderSkeleton());
+
    const params = new URLSearchParams({
         originCode: origin,
         destinationCode: destination,
@@ -117,14 +144,19 @@ async function runSearch() {
         pageSize
     });
     try {
-        const data = await apiFetch(`/flights?${params.toString()}`);
+        const data = await apiFetch(`/flights?${params.toString()}`, {
+            cache: "no-store",
+            signal: AbortSignal.timeout(70000)
+        });
 
         const items = data.items || [];
         resultsEl.innerHTML = "";
 
         if (items.length === 0) {
             showMessage(searchMessage, "לא נמצאו טיסות. נסו תאריך אחר.", "info");
-            resultsSection.hidden = true;
+            // משאירים את הכותרת והאזור בגובה קבוע — רק מחליפים שלדים בהודעה
+            resultsSection.hidden = false;
+            resultsEl.innerHTML = '<p class="empty">אין טיסות זמינות לתאריך הזה.</p>';
             return;
         }
 
@@ -136,8 +168,21 @@ async function runSearch() {
         renderPagination(currentPage, totalPages);
 
     } catch (error) {
-        resultsSection.hidden = true;
-        showMessage(searchMessage, error.message);
+        // לא מסתירים את האזור — כדי שהכותרת לא תיעלם ותחזור (קפיצה של העמוד)
+        resultsEl.innerHTML = "";
+        paginationEl.innerHTML = "";
+
+        const isNetwork = error?.status === 0
+            || error?.name === "TimeoutError"
+            || error?.name === "AbortError"
+            || error?.name === "TypeError";
+        showMessage(searchMessage,
+            isNetwork && error?.status !== 0
+                ? "השרת לא הגיב בזמן. נסו שוב בעוד רגע."
+                : error.message);
+
+        // במקום מסך ריק — הודעה בתוך אזור התוצאות, כדי שהכותרת והגובה יישארו יציבים
+        resultsEl.innerHTML = '<p class="empty">לא ניתן להציג טיסות כרגע.</p>';
     }
 }
 

@@ -4,81 +4,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FLYBY — אישור הזמנה</title>
-     <link rel="icon" type="image/jpg" href="images/לוגו.png">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header class="site-header">
         <div class="container header-inner">
-           <a href="index.html" class="logo">
-    <img src="images/לוגו האתר.jpg" alt="FlightBooking" class="logo-img">
-</a> 
+            <a href="index.html" class="logo" aria-label="FLYBY — טיסות בקלות">
+                <span class="logo__mark" aria-hidden="true">
+                    <svg viewBox="0 0 200 200" fill="currentColor">
+                        <path d="M172 92a8 8 0 0 0-8-8h-40l-40-46h-14l20 46H52l-12-14H28l8 24-8 24h12l12-14h38l-20 46h14l40-46h40a8 8 0 0 0 8-8z"/>
+                    </svg>
+                </span>
+                <span class="logo__word">FLYBY</span>
+            </a>
             <nav class="nav">
                 <a href="index.html">חיפוש טיסות</a>
                 <a href="flights.html">כל הטיסות</a>
-                <a href="my-bookings.html" id="navMyBookings">ההזמנות שלי</a>
+                <a href="my-bookings.html" id="navMyBookings" class="nav-cta" hidden>ההזמנות שלי</a>
                 <a href="admin.html" id="navAdmin" hidden>הוספת טיסה</a>
-                <a href="login.html" id="navLogin">התחברות</a>
+                <a href="admin-bookings.html" id="navAdminBookings" hidden>כל ההזמנות</a>
+                <a href="login.html" id="navLogin" class="nav-cta">התחברות</a>
                 <a href="#" id="navLogout" hidden>התנתקות</a>
             </nav>
         </div>
     </header>
 
-    <main class="container">
-        <div id="noBooking" class="message message-info" style="display:none">
-            לא נמצאה הזמנה להצגה. <a href="index.html">חזרה לחיפוש טיסות</a>
-        </div>
-
-        <div id="confirmationContent" hidden>
-            <div class="summary-box" style="text-align:center">
-                <h1 style="margin-bottom:8px">ההזמנה אושרה</h1>
-                <p style="color:var(--muted)">קוד ההזמנה שלך</p>
-                <div id="bookingReference" class="big-reference">—</div>
+    <main>
+        <div class="container">
+            <div id="noBooking" class="message message-info" style="display:none">
+                לא נמצאה הזמנה להצגה. <a href="index.html">חזרה לחיפוש טיסות</a>
             </div>
 
-            <div class="summary-box">
-                <div class="summary-row"><span class="label">סטטוס</span><span id="bookingStatus">—</span></div>
-                <div class="summary-row"><span class="label">נוסע</span><span id="passengerName">—</span></div>
-                <div class="summary-row"><span class="label">סה"כ שולם</span><span id="bookingTotal">—</span></div>
-                <div class="summary-row"><span class="label">ארוחה</span><span id="mealType">—</span></div>
-                <div class="summary-row"><span class="label">כשרות</span><span id="kashrutLevel">—</span></div>
-            </div>
+            <div id="confirmationContent" hidden>
+                <div class="summary-box" style="text-align:center; padding-block: var(--s7)">
+                    <span class="page-eyebrow" style="justify-content:center">אישור</span>
+                    <h1 style="font-size: clamp(1.8rem, 3vw, 2.4rem); margin-bottom: var(--s2)">ההזמנה אושרה</h1>
+                    <p style="color: var(--text-3); font-size: .84rem">קוד ההזמנה שלך</p>
+                    <div id="bookingReference" class="big-reference">—</div>
+                </div>
 
-            <h2>פרטי הטיסה</h2>
-            <div id="flightsDetails"></div>
+                <div class="summary-box">
+                    <div class="summary-row"><span class="label">סטטוס</span><span id="bookingStatus">—</span></div>
+                    <div class="summary-row"><span class="label">נוסע</span><span id="passengerName">—</span></div>
+                    <div class="summary-row"><span class="label">סה"כ שולם</span><span id="bookingTotal">—</span></div>
+                    <div class="summary-row"><span class="label">ארוחה</span><span id="mealType">—</span></div>
+                    <div class="summary-row"><span class="label">כשרות</span><span id="kashrutLevel">—</span></div>
+                </div>
 
-            <h2>מושבים</h2>
-            <div id="seatsDetails" class="summary-box"></div>
+                <h2>פרטי הטיסה</h2>
+                <div id="flightsDetails"></div>
 
-            <div class="form-actions" style="justify-content:center;margin-top:24px">
-                <a href="index.html" class="btn btn-secondary">חיפוש טיסה נוספת</a>
-                <a href="my-bookings.html" class="btn btn-primary">ההזמנות שלי</a>
+                <h2>מושבים</h2>
+                <div id="seatsDetails" class="summary-box"></div>
+
+                <div class="form-actions" style="justify-content:center; margin-top: var(--s5)">
+                    <a href="index.html" class="btn btn-outline">חיפוש טיסה נוספת</a>
+                    <a href="my-bookings.html" class="btn btn-primary">ההזמנות שלי</a>
+                </div>
             </div>
         </div>
     </main>
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-inner">
-      <a href="index.html" class="footer-logo">
-        <img src="images/לוגו האתר.jpg" alt="FlightBooking" class="footer-logo-img">
-      </a>
-      <nav class="footer-links">
-        <a href="index.html">חיפוש טיסות</a>
-        <a href="flights.html">כל הטיסות</a>
-        <a href="my-bookings.html">ההזמנות שלי</a>
-      </nav>
-      <span class="footer-text">טיסות בקלות, מכל מקום</span>
-    </div>
-    <div class="footer-bottom">
-      <span>FLYBY &copy; 2026</span>
-      <span>כל הזכויות שמורות</span>
-    </div>
-  </div>
-</footer>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-top">
+                <div>
+                    <div class="footer-brand">
+                        <span class="logo__mark" aria-hidden="true">
+                            <svg viewBox="0 0 200 200" fill="currentColor">
+                                <path d="M172 92a8 8 0 0 0-8-8h-40l-40-46h-14l20 46H52l-12-14H28l8 24-8 24h12l12-14h38l-20 46h14l40-46h40a8 8 0 0 0 8-8z"/>
+                            </svg>
+                        </span>
+                        <span class="logo__word">FLYBY</span>
+                    </div>
+                    <div class="footer-brand-rule"></div>
+                    <p class="footer-about">טיסות בקלות, מכל מקום</p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>ניווט</h4>
+                    <a href="index.html">חיפוש טיסות</a>
+                    <a href="flights.html">כל הטיסות</a>
+                    <a href="my-bookings.html">ההזמנות שלי</a>
+                </div>
+
+                <div class="footer-col">
+                    <h4>מידע</h4>
+                    <a href="login.html">התחברות</a>
+                    <a href="register.html">הרשמה</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>FLYBY &copy; 2026</span>
+                <span>כל הזכויות שמורות</span>
+            </div>
+        </div>
+    </footer>
+
     <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/confirmation.js"></script>
 </body>
 </html>

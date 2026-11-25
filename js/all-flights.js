@@ -74,22 +74,36 @@ async function loadCatalog(page) {
   const meta = document.getElementById('flightsMeta');
 
   hideMessage('message');
-  list.innerHTML = '<p class="loading">טוען טיסות…</p>';
+
+  // שלדים בגובה הכרטיסים — כדי שכשהתוצאות מגיעות העמוד לא "יקפוץ"
+  const skeletons = Array.from({ length: PAGE_SIZE }, () => `
+    <div class="skeleton-card" aria-hidden="true">
+      <span class="skeleton-bar is-head"></span>
+      <span class="skeleton-box"></span>
+      <span class="skeleton-bar is-line"></span>
+      <span class="skeleton-bar is-foot"></span>
+    </div>`).join('');
+  list.innerHTML = skeletons;
   pagination.innerHTML = '';
   meta.textContent = 'טוען טיסות…';
 
   try {
     // apiFetch מוסיף את API_BASE בעצמו — לכן נתיב יחסי בלבד
     const { params, hasFilter } = buildCatalogParams(page);
-    const data = await apiFetch(`/flights/catalog?${params.toString()}`);
+    // עם cache: 'no-store' — כל בקשה פוגעת בשרת. ב-Render השרת "נרדם", ולכן
+    // הבקשה הראשונה עשויה לקחת 30–60 שניות. קיצוב כדי שלא ייראה כאילו הדף "תקוע/מתרענן".
+    const data = await apiFetch(`/flights/catalog?${params.toString()}`, {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(70000)
+    });
 
     const items = Array.isArray(data?.items) ? data.items : [];
 
     if (items.length === 0) {
       meta.textContent = 'לא נמצאו טיסות.';
       list.innerHTML = hasFilter
-        ? '<p class="empty">אין טיסות שמתאימות לסינון. נסי לנקות את הסינון.</p>'
-        : '<p class="empty">אין טיסות להצגה כרגע.</p>';
+        ? '<div class="empty">אין טיסות שמתאימות לסינון. נסו לנקות את הסינון.</div>'
+        : '<div class="empty">אין טיסות להצגה כרגע.</div>';
       return;
     }
 
@@ -100,7 +114,24 @@ async function loadCatalog(page) {
   } catch (err) {
     meta.textContent = '';
     list.innerHTML = '';
-    showMessage('message', err.message || 'לא ניתן לטעון את רשימת הטיסות.', 'error');
+    // כשל רשת / timeout — מסר ברור עם כפתור ניסיון חוזר (בלי לרענן את העמוד)
+    const isNetwork = err?.status === 0
+      || err?.name === 'TimeoutError'
+      || err?.name === 'AbortError'
+      || err?.name === 'TypeError';
+    const text = err?.status === 0
+      ? err.message                                  // "אין חיבור לשרת ה-API…" — הודעה מדויקת מ-api.js
+      : isNetwork
+        ? 'השרת לא הגיב בזמן. נסו שוב בעוד רגע.'
+        : (err.message || 'לא ניתן לטעון את רשימת הטיסות.');
+    showMessage('message', text, 'error');
+
+    const retry = document.createElement('button');
+    retry.type = 'button';
+    retry.className = 'btn btn-outline';
+    retry.textContent = 'ניסיון חוזר';
+    retry.addEventListener('click', () => loadCatalog(page));
+    document.getElementById('message')?.appendChild(retry);
   }
 }
 
@@ -156,10 +187,9 @@ function renderPagination(data, fallbackPage) {
   const pageNumber = data.pageNumber ?? fallbackPage;
   const totalPages = data.totalPages ?? 1;
 
-  if (totalPages <= 1) {
-    pagination.innerHTML = '';
-    return;
-  }
+  // שומרים גובה קבוע לעימוד — שלא ייעלם ויחזור (ומושך את העמוד)
+  pagination.innerHTML = '';
+  if (totalPages <= 1) return;
 
   const hasPrevious = data.hasPrevious ?? pageNumber > 1;
   const hasNext = data.hasNext ?? pageNumber < totalPages;
@@ -179,7 +209,8 @@ function renderPagination(data, fallbackPage) {
       const target = Number(btn.dataset.page);
       if (!target || target < 1 || target > totalPages) return;
       loadCatalog(target);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // גלילה מיידית (לא חלקה) — גלילה אנימטיבית נראית כמו "העמוד זז לבד"
+      window.scrollTo({ top: 0, behavior: 'auto' });
     });
   });
 }
@@ -228,3 +259,4 @@ function esc(v) {
   return String(v ?? '').replace(/[&<>"']/g, c =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
+

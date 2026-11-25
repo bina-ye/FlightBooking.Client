@@ -1,6 +1,10 @@
 // כתובת ה-API — זיהוי אוטומטי לפי הסביבה
 // פיתוח מקומי: השרת רץ על localhost:5069
 // פרודקשן (Render): לקוח סטטי שנטען מדומיין ציבורי → API של Render
+//
+// עדיף לפתוח את הלקוח דרך אותו פורט/מארח של השרת עצמו (http://localhost:5069).
+// אם הלקוח נפתח באמצעות Live Server בפורט אחר, הבקשה לשרת נחשבת "cross-origin"
+// ודורשת CORS. במקרה כזה מנגנון "פולינג" של Live Server מרענן את הדף בכל שינוי קובץ.
 const API_BASE = (() => {
     const isLocal = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
     return isLocal
@@ -40,7 +44,19 @@ async function apiFetch(path, options = {}) {
         headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
+    let response;
+    try {
+        response = await fetch(`${API_BASE}${path}`, { ...options, headers });
+    } catch (err) {
+        // TypeError = השרת לא מגיב בכלל (כבוי / לא נטען / חסימת רשת)
+        if (err?.name === "TypeError") {
+            const e = new Error("אין חיבור לשרת ה-API. ודאו שהשרת רץ על http://localhost:5069.");
+            e.status = 0;
+            e.cause = err;
+            throw e;
+        }
+        throw err;
+    }
 
     // 401 — הטוקן פג או לא תקין
     if (response.status === 401) {
