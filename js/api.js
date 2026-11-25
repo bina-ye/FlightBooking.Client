@@ -9,7 +9,7 @@ const API_BASE = (() => {
     const isLocal = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
     return isLocal
         ? "http://localhost:5069/api"
-        : "https://flyby-api-2ebo.onrender.com";
+        : "https://flyby-api-2ebo.onrender.com/api";
 })();
 
 // שמירת הטוקן
